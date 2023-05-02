@@ -28,12 +28,15 @@ task jacocoTestReport(type: JacocoReport, dependsOn: ['test']) {
   }
 
   def coverageSourceDirs = [    'core/src/main/java',    'desktop/src/main/java'  ]
-  classDirectories = fileTree(
-    dir: './build/classes/java/main',
-    excludes: [
-      '**/*Test*'
-    ]
-  )
+   executionData = files([
+    "$buildDir/jacoco/test.exec",
+    "$buildDir/jacoco/testDebugUnitTest.exec"
+   ])
+
+  classDirectories.from = files([
+    "$buildDir/classes/java/main",
+    "$buildDir/classes/kotlin/main"
+  ])
   sourceDirectories = files(coverageSourceDirs)
   additionalSourceDirs = files(coverageSourceDirs)
   executionData = files("$buildDir/jacoco/jacoco.exec")
