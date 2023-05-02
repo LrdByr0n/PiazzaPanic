@@ -1,107 +1,36 @@
-buildscript {
-    
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+# This workflow will build a Java project with Gradle and cache/restore any dependencies to improve the workflow execution time
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-gradle
 
-    repositories {
-        mavenLocal()
-        mavenCentral()
-        gradlePluginPortal()
-        maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
-        google()
-    }
-    dependencies {
+name: Java CI with Gradle
 
-    }
-}
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
 
-plugins {
-  id 'jacoco'
-}
+permissions:
+  contents: read
 
-jacoco {
-  toolVersion = "0.8.6"
-}
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
 
-task jacocoTestReport(type: JacocoReport, dependsOn: ['test']) {
-  reports {
-    xml.enabled true
-    html.enabled true
-  }
-
-  def coverageSourceDirs = ['core/src/main/java', 'desktop/src/main/java']
-  classDirectories = fileTree(
-    dir: './build/classes/java/main',
-    excludes: [
-      '**/*Test*'
-    ]
-  )
-  sourceDirectories = files(coverageSourceDirs)
-  additionalSourceDirs = files(coverageSourceDirs)
-  executionData = fileTree(dir: "$buildDir", includes: [
-    "jacoco/*.exec"
-  ])
-  
-  jacoco {
-    // exclude test files from the report
-    excludes = ['**/*Test*']
-  }
-}
-
-
-allprojects {
-    apply plugin: "eclipse"
-
-    version = '1.0'
-    ext {
-        appName = "Piazza Panic"
-        gdxVersion = '1.11.0'
-        roboVMVersion = '2.3.16'
-        box2DLightsVersion = '1.5'
-        ashleyVersion = '1.7.4'
-        aiVersion = '1.8.2'
-        gdxControllersVersion = '2.2.1'
-    }
-
-    repositories {
-        mavenLocal()
-        mavenCentral()
-        google()
-        gradlePluginPortal()
-        maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
-        maven { url "https://oss.sonatype.org/content/repositories/releases/" }
-        maven { url "https://jitpack.io" }
-    }
-}
-
-project(":desktop") {
-    apply plugin: "java-library"
-
-
-    dependencies {
-        implementation project(":core")
-        api "com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion"
-        api "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
-        
-    }
-}
-
-project(":core") {
-    apply plugin: "java-library"
-
-
-    dependencies {
-        api "com.badlogicgames.gdx:gdx:$gdxVersion"
-        testImplementation(platform('org.junit:junit-bom:5.9.2'))
-        testImplementation('org.junit.jupiter:junit-jupiter')
-    }
-
-    test {
-        useJUnitPlatform()
-        testLogging {
-            events "passed", "skipped", "failed"
-        }
-        jacoco {
-          append = false
-          destinationFile = file("$buildDir/jacoco/jacoco.exec")
-        }
-    }
-}
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up JDK 11
+      uses: actions/setup-java@v3
+      with:
+        java-version: '11'
+        distribution: 'temurin'
+    - name: Build with Gradle
+      uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
+      with:
+        arguments: build
