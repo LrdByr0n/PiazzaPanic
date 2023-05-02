@@ -13,8 +13,6 @@ jobs:
         os: [ubuntu-22.04, windows-2022, macos-12]
     runs-on: ${{ matrix.os }}
 
-    permissions:
-      contents: read
 
     steps:
     - uses: actions/checkout@v3
@@ -27,9 +25,8 @@ jobs:
       uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
       with:
         arguments: build jacocoTestReport
-        build-root-directory: PiazzaPanic
     - name: Upload JaCoCo coverage report as a workflow artifact
       uses: actions/upload-artifact@v3.1.1
       with:
-        name: jacoco-report-${{ matrix.os }}
+        name: jacoco-report
         path: PiazzaPanic/reports/jacoco/test/html/
