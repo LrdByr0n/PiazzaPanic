@@ -13,6 +13,12 @@ buildscript {
     }
 }
 
+plugins {
+    id 'java-library'
+    id 'jacoco'
+    id 'checkstyle'
+}
+
 allprojects {
     apply plugin: "eclipse"
 
@@ -51,12 +57,6 @@ project(":desktop") {
 }
 
 project(":core") {
-
-    plugins {
-        id 'java-library'
-        id 'jacoco'
-        id 'checkstyle'
-    }
     apply plugin: "java-library"
 
 
