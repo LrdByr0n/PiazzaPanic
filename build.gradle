@@ -1,3 +1,36 @@
+plugins {
+  id 'jacoco'
+}
+
+jacoco {
+  toolVersion = "0.8.6"
+}
+
+test {
+  jacoco {
+    append = false
+    destinationFile = file("$buildDir/jacoco/jacoco.exec")
+  }
+}
+
+task jacocoTestReport(type: JacocoReport, dependsOn: ['test']) {
+  reports {
+    xml.enabled true
+    html.enabled true
+  }
+
+  def coverageSourceDirs = [    'core/src/main/java',    'desktop/src/main/java'  ]
+  classDirectories = fileTree(
+    dir: './build/classes/java/main',
+    excludes: [
+      '**/*Test*'
+    ]
+  )
+  sourceDirectories = files(coverageSourceDirs)
+  additionalSourceDirs = files(coverageSourceDirs)
+  executionData = files("$buildDir/jacoco/jacoco.exec")
+}
+
 buildscript {
     
 
