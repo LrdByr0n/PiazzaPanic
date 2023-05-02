@@ -27,20 +27,24 @@ task jacocoTestReport(type: JacocoReport, dependsOn: ['test']) {
     html.enabled true
   }
 
-  def coverageSourceDirs = [        'core/src/main/java',        'desktop/src/main/java'    ]
-  
+  def coverageSourceDirs = [    'core/src/main/java',    'desktop/src/main/java'  ]
   classDirectories.setFrom(fileTree(
     dir: './build/classes/java/main',
     excludes: [
       '**/*Test*'
     ]
   ))
-  
   sourceDirectories.setFrom(files(coverageSourceDirs))
   additionalSourceDirs.setFrom(files(coverageSourceDirs))
-  
   executionData.setFrom(files("$buildDir/jacoco/jacoco.exec"))
+  
+  jacoco {
+    // moved from `test` task
+    append = false
+    destinationFile = file("$buildDir/jacoco/jacoco.exec")
+  }
 }
+
 
 allprojects {
     apply plugin: "eclipse"
