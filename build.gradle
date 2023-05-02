@@ -1,3 +1,18 @@
+buildscript {
+    
+
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        gradlePluginPortal()
+        maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+        google()
+    }
+    dependencies {
+
+    }
+}
+
 plugins {
   id 'jacoco'
 }
@@ -29,21 +44,6 @@ task jacocoTestReport(type: JacocoReport, dependsOn: ['test']) {
   sourceDirectories = files(coverageSourceDirs)
   additionalSourceDirs = files(coverageSourceDirs)
   executionData = files("$buildDir/jacoco/jacoco.exec")
-}
-
-buildscript {
-    
-
-    repositories {
-        mavenLocal()
-        mavenCentral()
-        gradlePluginPortal()
-        maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
-        google()
-    }
-    dependencies {
-
-    }
 }
 
 allprojects {
